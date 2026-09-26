@@ -1,5 +1,3 @@
-@import "tailwindcss";
-
 :root {
   --burgundy-dark: #1a0508;
   --burgundy: #4a0e17;
@@ -11,20 +9,23 @@
 }
 
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
 body {
-  background-color: var(--burgundy-dark);
-  background-image: radial-gradient(circle at 50% 0%, var(--burgundy) 0%, var(--burgundy-dark) 80%);
+  background-color: var(--burgundy-dark) !important;
+  background-image: radial-gradient(circle at 50% 0%, var(--burgundy) 0%, var(--burgundy-dark) 80%) !important;
   color: var(--text-light);
   font-family: 'Montserrat', sans-serif;
-  min-height: 100vh;
   overflow-x: hidden;
-  position: relative;
 }
 
 /* Font families */
@@ -38,6 +39,24 @@ body {
 
 .font-montserrat {
   font-family: 'Montserrat', sans-serif;
+}
+
+/* Main wrapper - centers envelope initially */
+.main-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+/* Envelope container */
+.envelope-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
 }
 
 /* Envelope styles */
@@ -77,7 +96,7 @@ body {
   z-index: 3;
 }
 
-.envelope-open::after {
+.envelope.open::after {
   transform: rotateX(180deg);
   z-index: 1;
 }
@@ -102,13 +121,18 @@ body {
 }
 
 /* Pulse animation for click hint */
-@keyframes pulse {
+@keyframes pulse-hint {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
 
-.animate-pulse-hint {
-  animation: pulse 2s infinite;
+.click-hint {
+  margin-top: 30px;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+  animation: pulse-hint 2s infinite;
 }
 
 /* Petal animation */
@@ -125,9 +149,8 @@ body {
 
 .petal {
   position: fixed;
-  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 150% 0 150% 0;
-  z-index: 8;
+  z-index: 100;
   pointer-events: none;
   animation: fall linear forwards;
 }
@@ -170,6 +193,7 @@ body {
   border-radius: 8px;
   padding: 20px;
   width: 100%;
+  margin-bottom: 30px;
 }
 
 /* Button styles */
@@ -190,6 +214,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 10px;
+  width: 100%;
 }
 
 .btn:hover, .btn:active {
@@ -208,17 +233,12 @@ body {
   border-color: var(--gold-light);
 }
 
-/* Transition classes */
-.envelope-container {
-  transition: opacity 1s ease, transform 1s ease;
-}
-
+/* App container */
 .app-container {
   width: 100%;
   max-width: 420px;
   min-height: 100vh;
   background: linear-gradient(180deg, rgba(74, 14, 23, 0.95) 0%, rgba(26, 5, 8, 0.98) 100%);
-  transition: opacity 1.5s ease, transform 1.5s ease;
   position: relative;
   padding: 40px 20px;
   display: flex;
@@ -226,20 +246,42 @@ body {
   align-items: center;
   text-align: center;
   overflow-y: auto;
+  animation: fadeInUp 1.5s ease forwards;
 }
 
-.app-hidden {
-  opacity: 0;
-  transform: translateY(30px);
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.app-visible {
-  opacity: 1;
-  transform: translateY(0);
+/* Timeline section */
+.timeline {
+  width: 100%;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 25px 0;
+  margin-bottom: 30px;
 }
 
-.envelope-hidden {
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(0.9);
+.timeline-item {
+  margin-bottom: 20px;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Action buttons container */
+.action-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 30px;
 }
