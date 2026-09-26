@@ -1,10 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 const EVENT_DATE = new Date("November 7, 2026 12:00:00").getTime();
-const MAMA_NUMBER = "256701029184";
-const PAPA_NUMBER = "256705817404";
-const RSVP_MESSAGE = "Hello! We would love to attend the Christening and 1st Birthday celebration. God bless!";
-const MAPS_LINK = "https://maps.google.com/?q=Buziga+Hill+View+Kampala";
 
 interface PetalData {
   id: number;
@@ -49,11 +45,11 @@ export default function App() {
   const [showInvitation, setShowInvitation] = useState(false);
   const [petals, setPetals] = useState<PetalData[]>([]);
 
-  const createPetals = useCallback(() => {
+  const createPetals = () => {
     const colors = ['rgba(255,255,255,0.9)', 'rgba(255,220,200,0.8)', 'rgba(212,175,55,0.7)'];
     const arr: PetalData[] = [];
-    const w = window.innerWidth || 400;
-    const h = window.innerHeight || 600;
+    const w = typeof window !== 'undefined' ? window.innerWidth : 400;
+    const h = typeof window !== 'undefined' ? window.innerHeight : 600;
     for (let i = 0; i < 50; i++) {
       arr.push({
         id: i,
@@ -66,36 +62,32 @@ export default function App() {
     }
     setPetals(arr);
     setTimeout(() => setPetals([]), 4500);
-  }, []);
+  };
 
-  const handleOpen = useCallback(() => {
+  const handleOpen = () => {
     if (isOpen) return;
     setIsOpen(true);
     createPetals();
     setTimeout(() => setShowInvitation(true), 900);
-  }, [isOpen, createPetals]);
+  };
 
-  const mamaUrl = `https://wa.me/${MAMA_NUMBER}?text=${encodeURIComponent(RSVP_MESSAGE)}`;
-  const papaUrl = `https://wa.me/${PAPA_NUMBER}?text=${encodeURIComponent(RSVP_MESSAGE)}`;
-
-  return (
-    <div className="page-root">
-      {petals.map((p) => (
-        <div
-          key={p.id}
-          className="petal"
-          style={{
-            width: `${p.size}px`,
-            height: `${p.size}px`,
-            left: `${p.startX}px`,
-            top: `${p.startY}px`,
-            background: p.color,
-            animationDuration: `${p.duration}s`,
-          }}
-        />
-      ))}
-
-      {!showInvitation ? (
+  if (!showInvitation) {
+    return (
+      <>
+        {petals.map((p) => (
+          <div
+            key={p.id}
+            className="petal"
+            style={{
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              left: `${p.startX}px`,
+              top: `${p.startY}px`,
+              background: p.color,
+              animationDuration: `${p.duration}s`,
+            }}
+          />
+        ))}
         <div className="envelope-screen">
           <div className="envelope-wrapper" onClick={handleOpen}>
             <div className={`envelope${isOpen ? ' open' : ''}`}>
@@ -104,59 +96,46 @@ export default function App() {
             <div className="click-hint">Tap to Open</div>
           </div>
         </div>
-      ) : (
-        <div className="invitation">
-          <div className="glow glow-tr"></div>
-          <div className="glow glow-bl"></div>
+      </>
+    );
+  }
 
-          <div className="monogram">1ST ✝</div>
-          <div className="sub-header">Please join us to celebrate our beloved son&apos;s</div>
-
-          <h1 className="event-title">
-            Christening &amp;<br />First Birthday
-          </h1>
-
-          <div className="divider"></div>
-
-          <div className="scripture-box">
-            <p className="scripture-text">
-              &ldquo;I prayed for this child, and the Lord has granted me what I asked of him.&rdquo;
-            </p>
-            <span className="scripture-ref">— 1 Samuel 1:27</span>
-          </div>
-
-          <Countdown />
-
-          <div className="timeline">
-            <div className="timeline-item">
-              <div className="timeline-title">Christening Ceremony</div>
-              <div className="timeline-detail"><strong>12:00 PM</strong><br />Blessing &amp; Dedication</div>
-            </div>
-            <div className="timeline-item">
-              <div className="timeline-title">Lunch &amp; Celebration</div>
-              <div className="timeline-detail"><strong>1:00 PM</strong><br />Fellowship &amp; Feast</div>
-            </div>
-            <div className="timeline-item">
-              <div className="timeline-title">Cake &amp; Fellowship</div>
-              <div className="timeline-detail"><strong>2:30 PM</strong><br />Cutting the Cake</div>
-            </div>
-          </div>
-
-          <div className="venue-section">
-            <div className="venue-title">Venue</div>
-            <div className="venue-detail">Parents Home<br />Buziga Hill View</div>
-          </div>
-
-          <div className="action-buttons">
-            <a href={mamaUrl} className="btn btn-primary" target="_blank" rel="noopener noreferrer">RSVP Mama</a>
-            <a href={papaUrl} className="btn btn-primary" target="_blank" rel="noopener noreferrer">RSVP Papa</a>
-            <a href={MAPS_LINK} className="btn" target="_blank" rel="noopener noreferrer">View Location Map</a>
-          </div>
-
-          <div className="footer-note">We can&apos;t wait to celebrate with you!</div>
-          <div className="footer-text">KINDLY RSVP BY 30TH OCTOBER 2026</div>
+  return (
+    <div className="invitation">
+      <div className="monogram">1ST ✝</div>
+      <div className="sub-header">Please join us to celebrate our beloved son's</div>
+      <h1 className="event-title">Christening &<br />First Birthday</h1>
+      <div className="divider"></div>
+      <div className="scripture-box">
+        <p className="scripture-text">"I prayed for this child, and the Lord has granted me what I asked of him."</p>
+        <span className="scripture-ref">— 1 Samuel 1:27</span>
+      </div>
+      <Countdown />
+      <div className="timeline">
+        <div className="timeline-item">
+          <div className="timeline-title">Christening Ceremony</div>
+          <div className="timeline-detail"><strong>12:00 PM</strong><br />Blessing & Dedication</div>
         </div>
-      )}
+        <div className="timeline-item">
+          <div className="timeline-title">Lunch & Celebration</div>
+          <div className="timeline-detail"><strong>1:00 PM</strong><br />Fellowship & Feast</div>
+        </div>
+        <div className="timeline-item">
+          <div className="timeline-title">Cake & Fellowship</div>
+          <div className="timeline-detail"><strong>2:30 PM</strong><br />Cutting the Cake</div>
+        </div>
+      </div>
+      <div className="venue-section">
+        <div className="venue-title">Venue</div>
+        <div className="venue-detail">Parents Home<br />Buziga Hill View</div>
+      </div>
+      <div className="action-buttons">
+        <a href="https://wa.me/256701029184?text=Hello!%20We%20would%20love%20to%20attend%20the%20Christening%20and%201st%20Birthday%20celebration.%20God%20bless!" className="btn btn-primary" target="_blank" rel="noopener noreferrer">RSVP Mama</a>
+        <a href="https://wa.me/256705817404?text=Hello!%20We%20would%20love%20to%20attend%20the%20Christening%20and%201st%20Birthday%20celebration.%20God%20bless!" className="btn btn-primary" target="_blank" rel="noopener noreferrer">RSVP Papa</a>
+        <a href="https://maps.google.com/?q=Buziga+Hill+View+Kampala" className="btn" target="_blank" rel="noopener noreferrer">View Location Map</a>
+      </div>
+      <div className="footer-note">We can't wait to celebrate with you!</div>
+      <div className="footer-text">KINDLY RSVP BY 30TH OCTOBER 2026</div>
     </div>
   );
 }
