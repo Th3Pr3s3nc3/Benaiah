@@ -587,6 +587,7 @@ body {
   color: #665a45;
   line-height: 1.6;
   letter-spacing: 0.5px;
+}
 
 .create-page {
   --create-ink: #354650;
@@ -1039,7 +1040,6 @@ body {
     grid-column: 2;
     grid-row: 1;
   }
-}
 }
 
 @media (prefers-reduced-motion: reduce) {
