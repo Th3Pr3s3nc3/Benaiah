@@ -1,5 +1,5 @@
-import { useState, type CSSProperties } from 'react';
-import { DoorOpen, Gift, MessageCircle, Mic2, Navigation, PartyPopper, Phone, Sparkles, Utensils } from 'lucide-react';
+import { useRef, useState, type CSSProperties } from 'react';
+import { DoorOpen, Gift, MessageCircle, Mic2, Navigation, PartyPopper, Phone, Sparkles, Utensils, Volume2, VolumeX } from 'lucide-react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import CreatePage from './CreatePage';
 
@@ -48,9 +48,18 @@ function PetalLayer({ petals }: { petals: PetalData[] }) {
 
 function InvitationPage() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
   const [showInvitation, setShowInvitation] = useState(false);
   const [petals, setPetals] = useState<PetalData[]>([]);
+  const musicPlayer = useRef<HTMLIFrameElement>(null);
   const guestName = new URLSearchParams(window.location.search).get('guest')?.trim();
+
+  const sendMusicCommand = (func: 'mute' | 'unMute' | 'playVideo') => {
+    musicPlayer.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: 'command', func, args: '' }),
+      'https://www.youtube.com',
+    );
+  };
 
   const createPetals = () => {
     const colors = ['rgba(151, 194, 222, 0.92)', 'rgba(220, 237, 247, 0.96)', 'rgba(125, 171, 204, 0.9)', 'rgba(177, 207, 226, 0.94)'];
@@ -80,9 +89,16 @@ function InvitationPage() {
 
   const handleOpen = () => {
     if (isOpen) return;
+    sendMusicCommand('playVideo');
     setIsOpen(true);
     createPetals();
     setTimeout(() => setShowInvitation(true), 300);
+  };
+
+  const toggleMusic = () => {
+    const nextMuted = !isMuted;
+    setIsMuted(nextMuted);
+    sendMusicCommand(nextMuted ? 'mute' : 'unMute');
   };
 
   return (
@@ -150,6 +166,33 @@ function InvitationPage() {
           {!isOpen && <div className="click-hint">Tap to Open</div>}
         </button>
       </div>
+      {isOpen && (
+        <button
+          className="music-toggle"
+          type="button"
+          onClick={toggleMusic}
+          aria-label={isMuted ? 'Unmute music' : 'Mute music'}
+          aria-pressed={isMuted}
+          title={isMuted ? 'Unmute music' : 'Mute music'}
+        >
+          {isMuted
+            ? <VolumeX size={20} aria-hidden="true" />
+            : <Volume2 size={20} aria-hidden="true" />}
+        </button>
+      )}
+      <iframe
+        ref={musicPlayer}
+        className="invitation-music"
+        src={`https://www.youtube.com/embed/4Oc6PTtcthA?autoplay=0&mute=0&playsinline=1&controls=0&start=180&enablejsapi=1&origin=${encodeURIComponent(window.location.origin)}`}
+        title="Invitation music"
+        allow="autoplay; encrypted-media"
+        referrerPolicy="strict-origin-when-cross-origin"
+        aria-hidden="true"
+        onLoad={() => {
+          if (isOpen) sendMusicCommand('playVideo');
+          if (isMuted) sendMusicCommand('mute');
+        }}
+      />
     </>
   );
 }
