@@ -28,6 +28,12 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
 }
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (typeof error === 'object' && error !== null && 'message' in error) return String(error.message);
+  return String(error);
+}
+
 function createGuestLink(name: string) {
   const encodedName = encodeURIComponent(name).replace(/[!'()*]/g, (character) => (
     `%${character.charCodeAt(0).toString(16).toUpperCase()}`
@@ -77,7 +83,11 @@ export default function CreatePage() {
     setListLoading(true);
     fetchVisitors()
       .then((rows) => { if (active) setGuests(rows); })
-      .catch((error: unknown) => { if (active) setPageError(error instanceof Error ? error.message : 'Could not load guests.'); })
+      .catch((error: unknown) => {
+        const message = getErrorMessage(error);
+        console.error('Failed to load guests from Supabase:', message, error);
+        if (active) setPageError(message || 'Could not load guests.');
+      })
       .finally(() => { if (active) setListLoading(false); });
 
     return () => { active = false; };
@@ -140,7 +150,9 @@ export default function CreatePage() {
       setSingleNotice(null);
       await refreshGuests();
     } catch (error) {
-      setSingleError(error instanceof Error ? error.message : 'Could not save this guest.');
+      const message = getErrorMessage(error);
+      console.error('Failed to save this guest in Supabase:', message, error);
+      setSingleError(message || 'Could not save this guest.');
     } finally {
       setSingleBusy(false);
     }
@@ -205,7 +217,9 @@ export default function CreatePage() {
         url: createGuestLink(currentByName.get(key)?.name ?? name),
       })));
     } catch (error) {
-      setBulkError(error instanceof Error ? error.message : 'Could not save these guests.');
+      const message = getErrorMessage(error);
+      console.error('Failed to save guests in Supabase:', message, error);
+      setBulkError(message || 'Could not save these guests.');
     } finally {
       setBulkBusy(false);
     }
@@ -217,7 +231,8 @@ export default function CreatePage() {
       await copyText(text);
       setCopiedId(id);
       window.setTimeout(() => setCopiedId((currentId) => currentId === id ? '' : currentId), 1800);
-    } catch {
+    } catch (error) {
+      console.error('Failed to copy invitation link:', getErrorMessage(error), error);
       setCopiedId('');
       setCopyError('Could not copy automatically. Select and copy the link instead.');
     }
@@ -229,6 +244,7 @@ export default function CreatePage() {
     setPageError('');
     const { error } = await supabase.from('visitors').update({ sent }).eq('id', guest.id);
     if (error) {
+      console.error('Failed to update guest in Supabase:', error.message, error);
       setPageError(error.message);
     } else {
       setGuests((current) => current.map((item) => item.id === guest.id ? { ...item, sent } : item));
@@ -242,6 +258,7 @@ export default function CreatePage() {
     setPageError('');
     const { error } = await supabase.from('visitors').delete().eq('id', guest.id);
     if (error) {
+      console.error('Failed to delete guest in Supabase:', error.message, error);
       setPageError(error.message);
     } else {
       setGuests((current) => current.filter((item) => item.id !== guest.id));
