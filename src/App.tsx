@@ -1,5 +1,7 @@
 import { useState, type CSSProperties } from 'react';
 import { DoorOpen, Gift, MessageCircle, Mic2, Navigation, PartyPopper, Phone, Sparkles, Utensils } from 'lucide-react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import CreatePage from './CreatePage';
 
 interface PetalData {
   id: number;
@@ -44,10 +46,11 @@ function PetalLayer({ petals }: { petals: PetalData[] }) {
   );
 }
 
-export default function App() {
+function InvitationPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [showInvitation, setShowInvitation] = useState(false);
   const [petals, setPetals] = useState<PetalData[]>([]);
+  const guestName = new URLSearchParams(window.location.search).get('guest')?.trim();
 
   const createPetals = () => {
     const colors = ['rgba(151, 194, 222, 0.92)', 'rgba(220, 237, 247, 0.96)', 'rgba(125, 171, 204, 0.9)', 'rgba(177, 207, 226, 0.94)'];
@@ -87,7 +90,12 @@ export default function App() {
       <PetalLayer petals={petals} />
       <div className={`invitation-wrapper${showInvitation ? ' visible' : ''}`}>
         <div className="invitation">
-          <div className="monogram">1ST ✝</div>
+          <div className="invitee-line">
+            <span>Dear</span>
+            {guestName
+              ? <span className="invitee-name">{guestName}</span>
+              : <span className="invitee-name-space" aria-label="Space for invitee name" />}
+          </div>
           <div className="sub-header">Please join us to celebrate our beloved son's</div>
           <h1 className="event-title">Christening &<br />First Birthday</h1>
           <div className="divider"></div>
@@ -143,5 +151,17 @@ export default function App() {
         </button>
       </div>
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<InvitationPage />} />
+        <Route path="/create" element={<CreatePage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
