@@ -50,7 +50,7 @@ export default function App() {
   const [petals, setPetals] = useState<PetalData[]>([]);
 
   const createPetals = () => {
-    const colors = ['rgba(255, 182, 193, 0.9)', 'rgba(255, 218, 224, 0.95)', 'rgba(247, 173, 188, 0.88)', 'rgba(232, 156, 170, 0.9)'];
+    const colors = ['rgba(151, 194, 222, 0.92)', 'rgba(220, 237, 247, 0.96)', 'rgba(125, 171, 204, 0.9)', 'rgba(177, 207, 226, 0.94)'];
     const arr: PetalData[] = [];
     const w = typeof window !== 'undefined' ? window.innerWidth : 400;
     const h = typeof window !== 'undefined' ? window.innerHeight : 600;
