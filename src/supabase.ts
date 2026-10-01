@@ -9,10 +9,11 @@ export interface VisitorRecord {
 }
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
+const supabasePublicKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim()
+  || import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
 
-export const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = supabaseUrl && supabasePublicKey
+  ? createClient(supabaseUrl, supabasePublicKey)
   : null;
 
 export async function fetchVisitors(): Promise<VisitorRecord[]> {

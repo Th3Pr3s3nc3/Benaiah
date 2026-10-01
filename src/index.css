@@ -322,6 +322,16 @@ body {
   font-weight: normal;
 }
 
+.event-date {
+  margin-bottom: 12px;
+  font-family: 'Lora', serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #8f6a24;
+  text-transform: uppercase;
+}
+
 .divider {
   width: 60px;
   height: 1px;

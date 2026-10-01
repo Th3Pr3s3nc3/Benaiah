@@ -114,6 +114,7 @@ function InvitationPage() {
           </div>
           <div className="sub-header">Please join us to celebrate our beloved son's</div>
           <h1 className="event-title">Christening &<br />First Birthday</h1>
+          <div className="event-date"><time dateTime="2026-11-07">Saturday 7th November 2026</time></div>
           <div className="divider"></div>
           <div className="scripture-box">
             <p className="scripture-text">"I prayed for this child, and the Lord has granted me what I asked of him."</p>
